@@ -11,7 +11,14 @@ ae_dir = os.path.join(project_root_dir, 'modules/AutoEncoder')
 if ae_dir not in sys.path:
     sys.path.append(ae_dir)
 
+#######################
+# Important to modify #
+#######################
 # Dataset Directory
+    # DFU
+DFU_DATASET_DIR = "/home/abian/Data/Dataset/GTMA/DiabeticFootDataset/"
+
+    # HSI Datasets
 BRAIN_HSI_DIR = '/home/abian/Data/Dataset/IUMA/Experimento (Abian)/'
 
 # Results Directory
