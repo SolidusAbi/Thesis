@@ -31,6 +31,9 @@ def sliding_window_iter(iterable, size):
 
 
 class FeatureSelectionMethod:
+    '''
+        Enum for indicating the feature selection methods.
+    '''
     Concrete = 0
     Gaussian = 1
 
