@@ -1,2 +1,3 @@
-from .ConcreteFeatureSelector import ConcreteFeatureSelector
 from .FeatureSelector import FeatureSelectorSG
+from .ConcreteFeatureSelector import ConcreteFeatureSelector
+from .GaussianFeatureSelector import GaussianFeatureSelector

@@ -1,7 +1,7 @@
 import torch
 
 from torch import nn
-from FeatureSelection.StochasticGate import ConcreteFeatureSelector, FeatureSelectorSG
+from FeatureSelection.StochasticGate import ConcreteFeatureSelector, GaussianFeatureSelector, FeatureSelectorSG
 
 from collections import deque
 from itertools import islice
@@ -29,8 +29,13 @@ def sliding_window_iter(iterable, size):
         # then the window would be yielded twice.
         yield tuple(window)
 
+
+class FeatureSelectionMethod:
+    Concrete = 0
+    Gaussian = 1
+
 class Model(nn.Module):
-    def __init__(self, dims:list, fs_threshold=.9, fs_tau=.3):
+    def __init__(self, dims:list, fs_method:FeatureSelectionMethod, fs_threshold=.9, fs_tau=.3, sigma=.5):
         ''' 
             DL model used for feature selection.
 
@@ -40,14 +45,26 @@ class Model(nn.Module):
                 List of dimensions for each layer. The first element is the input dimension
                 and last elements corresponds to the output size.
             
+            fs_method: FeatureSelectionMethod
+                Method used for feature selection by Dropout. Either Concrete or Gaussian approach.
+                
             fs_threshold: float
-                Threshold for the feature selection layer.
+                Threshold for the feature selection layer. Only used for Concrete approach.
             
             fs_tau: float
-                Temperature for the feature selection layer.
+                Temperature for the feature selection layer. Only used for Concrete approach.
+
+            sigma: float
+                Standard deviation for the Gaussian feature selection layer. Only used for Gaussian approach.
         '''
         super(Model, self).__init__()
-        self.feature_selector = ConcreteFeatureSelector(dims[0], p_threshold=fs_threshold, tau=fs_tau)
+        if fs_method == FeatureSelectionMethod.Concrete:
+            self.feature_selector = ConcreteFeatureSelector(dims[0], p_threshold=fs_threshold, tau=fs_tau)
+        elif fs_method == FeatureSelectionMethod.Gaussian:
+            self.feature_selector = GaussianFeatureSelector(dims[0], sigma=sigma)
+        else: 
+            raise ValueError(f'Invalid feature selection method: {fs_method}')
+
 
         layers = []
         for idx, (in_features, out_features) in enumerate(sliding_window_iter(dims, 2)):
@@ -81,4 +98,9 @@ class Model(nn.Module):
         r'''
             The sparseness ratio which identifies the number of deactive gates
         '''
-        return torch.sum(self.feature_selector.logit_p >= self.feature_selector.logit_threshold) / self.feature_selector.in_features
+        if isinstance(self.feature_selector, ConcreteFeatureSelector):
+            return torch.sum(self.feature_selector.logit_p >= self.feature_selector.logit_threshold) / self.feature_selector.in_features
+        elif isinstance(self.feature_selector, GaussianFeatureSelector):
+            return torch.sum(self.feature_selector.variational_parameter() <= 0) / self.feature_selector.in_features
+        
+        return 0.
