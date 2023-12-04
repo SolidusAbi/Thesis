@@ -11,5 +11,5 @@ class FeatureSelectorSG(nn.Module):
     def regularize(self):
         raise NotImplementedError
 
-    def variational_parameter(self):
+    def variational_parameter(self, logit=True):
         raise NotImplementedError

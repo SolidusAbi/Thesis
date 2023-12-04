@@ -40,8 +40,8 @@ class ConcreteFeatureSelector(FeatureSelectorSG):
         return torch.mean(1-p)
     
 
-    def variational_parameter(self):
-        return self.logit_p
+    def variational_parameter(self, logit=True):
+        return self.logit_p if logit else torch.sigmoid(self.logit_p)
     
     def __repr__(self):
         p_threshold = torch.sigmoid(torch.tensor(self.logit_threshold))

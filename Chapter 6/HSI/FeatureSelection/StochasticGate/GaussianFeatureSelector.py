@@ -42,8 +42,8 @@ class GaussianFeatureSelector(FeatureSelectorSG):
         # return torch.mean(self._guassian_cdf(self.mu, self.sigma))
         return torch.mean(self._guassian_cdf(1-self.mu, self.sigma))
 
-    def variational_parameter(self):
-        return self.mu
+    def variational_parameter(self, logit=True):
+        return self.mu if logit else F.hardtanh(self.mu, 0, 1)
     
     def __repr__(self):
         return f'GaussianFeatureSelector(in_features={self.in_features}, sigma={self.sigma:.2f})'
