@@ -1,7 +1,6 @@
 from .BrainCancerHSIBandSelectionBase import BrainCancerHSIBandSelectionBase
 from ..Model import FeatureSelectionMethod
 from ..Dataset import BrainCancerHSIDataset
-from ..utils import train
 
 from ..transforms import Normalize
 
@@ -11,10 +10,10 @@ import pandas as pd
 from .utils import split_dataset
 
 
-class VNIRimagesOp8C1(BrainCancerHSIBandSelectionBase):
+class VNIRimagesOp12C1(BrainCancerHSIBandSelectionBase):
     def __init__(self) -> None:
         super().__init__(fs_method=FeatureSelectionMethod.Gaussian, sigma=0.5)
-        self.experiment = 'VNIRimagesOp8C1'
+        self.experiment = 'VNIRimagesOp12C1'
         self.data_dir = os.path.join(config.BRAIN_HSI_DIR, f'preprocessed/data/no_outliers/{self.experiment}/')
         self.tb_writer = None
 
@@ -42,4 +41,3 @@ class VNIRimagesOp8C1(BrainCancerHSIBandSelectionBase):
         }
 
         return {**base_config, **config}
-

@@ -1,5 +1,6 @@
 import os
 import config
+import torch
 
 from ..ExperimentBase import ExperimentBase
 from ..Model import Model, FeatureSelectionMethod
@@ -43,6 +44,23 @@ class BrainCancerHSIBandSelectionBase(ExperimentBase):
             'log_interval': 20,
         }
     
+    def run(self) -> None:
+        from ..utils import train
+
+        if self.config()['save_log']:
+            from torch.utils.tensorboard import SummaryWriter
+            log_dir = os.path.join(self.config()['save_result_dir'], 'logs')
+            self.tb_writer = SummaryWriter(log_dir)
+        
+        self.model = train(**self.config())
+        
+        if self.config()['save_log']:
+            self.tb_writer.close()
+
+        # save model
+        if self.config()['save_result']:
+            torch.save(self.model.state_dict(), os.path.join(self.config()['save_model_dir'], self.config()['save_model_name']))
+    
     def _batch_size(self) -> int:
         # Forcing the 100 iterations per epoch
         return (len(self.train_dataset) // 100) if self.train_dataset else 32
@@ -52,4 +70,16 @@ class BrainCancerHSIBandSelectionBase(ExperimentBase):
         with open(os.path.join(config['save_result_dir'], 'config.txt'), 'w') as f:
             for k, v in config.items():
                 f.write(f'{k}: {v}\n')
+
+    def save_results(self) -> None:
+        import pandas as pd
+        phi = self.model.feature_selector.variational_parameter(logit=False).detach()
+        save_dir = os.path.join(self.config()['save_result_dir'], 'result')
+
+        phi_df = pd.DataFrame(phi.numpy(), columns=[self.model.feature_selector.__repr__()])
+        phi_df.to_csv(os.path.join(save_dir, 'phi.csv'))
+
+        fs_df = pd.DataFrame(torch.where(phi<1)[0].numpy(), columns=['selected bands'])
+        fs_df.to_csv(os.path.join(save_dir, 'selected_bands.csv'), index=False)
+
     
