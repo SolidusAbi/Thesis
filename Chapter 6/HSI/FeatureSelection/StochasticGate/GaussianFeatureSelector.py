@@ -13,7 +13,8 @@ class GaussianFeatureSelector(FeatureSelectorSG):
 
     def forward(self, x):
         eps = torch.normal(0, torch.ones_like(self.mu))
-        z = self.mu + (self.sigma * eps * self.training)
+        drop_prob = self.mu + (self.sigma * eps * self.training) 
+        z = 1 - drop_prob
         gate = F.hardtanh(z, 0, 1)
         return gate * x
 
@@ -38,8 +39,8 @@ class GaussianFeatureSelector(FeatureSelectorSG):
             The expected regularization is the sum of the probabilities 
             that the gates are active
         '''
-        return torch.mean(self._guassian_cdf(self.mu, self.sigma))
-    
+        # return torch.mean(self._guassian_cdf(self.mu, self.sigma))
+        return torch.mean(self._guassian_cdf(1-self.mu, self.sigma))
 
     def variational_parameter(self):
         return self.mu
