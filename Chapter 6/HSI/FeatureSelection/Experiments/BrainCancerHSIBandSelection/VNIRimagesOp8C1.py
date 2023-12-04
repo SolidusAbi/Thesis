@@ -45,13 +45,15 @@ class VNIRimagesOp8C1(BrainCancerHSIBandSelectionBase):
         return {**base_config, **config}
 
     def run(self):
-        # if self.config()['save_log']:
-        #     from torch.utils.tensorboard import SummaryWriter
-        #     log_dir = os.path.join(self.config()['save_result_dir'], 'logs')
-        #     self.tb_writer = SummaryWriter(log_dir)
+        if self.config()['save_log']:
+            from torch.utils.tensorboard import SummaryWriter
+            log_dir = os.path.join(self.config()['save_result_dir'], 'logs')
+            self.tb_writer = SummaryWriter(log_dir)
         
         self.model = train(**self.config())
-        # self.tb_writer.close()
+        
+        if self.config()['save_log']:
+            self.tb_writer.close()
 
         # save model
         if self.config()['save_result']:
