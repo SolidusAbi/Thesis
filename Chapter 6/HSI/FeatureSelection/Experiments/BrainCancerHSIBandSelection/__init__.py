@@ -1,1 +1,2 @@
 from .BrainCancerHSIBandSelectionBase import BrainCancerHSIBandSelectionBase
+from .VNIRimagesOp8C1 import VNIRimagesOp8C1

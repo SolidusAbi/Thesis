@@ -9,7 +9,8 @@ class BrainCancerHSIDataset(Dataset):
         super().__init__()
         self.X = torch.tensor( pd.read_csv( os.path.join(dir, 'X.csv')).to_numpy(), dtype=torch.float32 )
         self.y = torch.tensor( pd.read_csv( os.path.join(dir, 'y.csv')).to_numpy().ravel(), dtype=torch.long ) - 1 
-            
+        self.wv = pd.read_csv(os.path.join(dir, '../wv.csv')).to_numpy().squeeze()
+        
         self.transform = transform
     
     def __getitem__(self, idx):
@@ -20,3 +21,6 @@ class BrainCancerHSIDataset(Dataset):
     
     def __len__(self):
         return len(self.X)
+    
+    def __repr__(self):
+        return 'BrainCancerHSIDataset()'

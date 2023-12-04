@@ -104,6 +104,6 @@ class Model(nn.Module):
         if isinstance(self.feature_selector, ConcreteFeatureSelector):
             return torch.sum(self.feature_selector.logit_p >= self.feature_selector.logit_threshold) / self.feature_selector.in_features
         elif isinstance(self.feature_selector, GaussianFeatureSelector):
-            return torch.sum(self.feature_selector.variational_parameter() <= 0) / self.feature_selector.in_features
+            return torch.sum(self.feature_selector.variational_parameter() >= 1) / self.feature_selector.in_features
         
         return 0.

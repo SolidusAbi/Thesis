@@ -22,4 +22,4 @@ DFU_DATASET_DIR = "/home/abian/Data/Dataset/GTMA/DiabeticFootDataset/"
 BRAIN_HSI_DIR = '/home/abian/Data/Dataset/IUMA/Experimento (Abian)/'
 
 # Results Directory
-RESULTS_DIR = '/home/abian/Data/Thesis/Thesis/'
+RESULTS_DIR = '/media/abian/E6FC-C8C4/Thesis/Results/'
