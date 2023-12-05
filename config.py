@@ -11,6 +11,10 @@ ae_dir = os.path.join(project_root_dir, 'modules/AutoEncoder')
 if ae_dir not in sys.path:
     sys.path.append(ae_dir)
 
+hyspeclab_dir = os.path.join(project_root_dir, 'modules/HySpecLab')
+if hyspeclab_dir not in sys.path:
+    sys.path.append(hyspeclab_dir)
+
 #######################
 # Important to modify #
 #######################
