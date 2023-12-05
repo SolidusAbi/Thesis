@@ -4,3 +4,6 @@
 [submodule "modules/AutoEncoder"]
 	path = modules/AutoEncoder
 	url = git@github.com:SolidusAbi/AutoEncoder.git
+[submodule "modules/HySpecLab"]
+	path = modules/HySpecLab
+	url = git@github.com:SolidusAbi/HySpecLab.git
