@@ -1,1 +1,2 @@
 from .BrainCancerHSIDataset import BrainCancerHSIDataset
+from .LaparoscopyDataset import LaparoscopyDataset

@@ -21,9 +21,10 @@ if hyspeclab_dir not in sys.path:
 # Dataset Directory
     # DFU
 DFU_DATASET_DIR = "/home/abian/Data/Dataset/GTMA/DiabeticFootDataset/"
-
     # HSI Datasets
 BRAIN_HSI_DIR = '/home/abian/Data/Dataset/IUMA/Experimento (Abian)/'
+    # Laparoscopy
+LAPAROSCOPY_HSI_DIR = '/home/abian/Data/Dataset/Japan/HSI/Abian/A/balanced/OCSP/'
 
 # Results Directory
 RESULTS_DIR = '/media/abian/E6FC-C8C4/Thesis/Results/'
