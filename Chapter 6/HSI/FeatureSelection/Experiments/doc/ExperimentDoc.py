@@ -3,7 +3,6 @@ from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
 import numpy as np
-from torch.nn.functional import hardtanh, sigmoid
 
 def _check_fs(model):
     from FeatureSelection.StochasticGate import GaussianFeatureSelector, ConcreteFeatureSelector
@@ -59,12 +58,19 @@ class ExperimentDoc:
     @staticmethod
     def plot_band_selection(exp: ExperimentBase, samples=None, labels=None, wv=None) -> Figure:
         import torch 
+        from FeatureSelection.StochasticGate import GaussianFeatureSelector, ConcreteFeatureSelector
 
         # Generate samples and/or labels if not provided
         samples = _get_random_samples(exp) if samples is None else samples
 
         phi = exp.model.feature_selector.variational_parameter(logit=False).detach()
-        activated_gates = torch.where(phi < 1)[0]
+        if isinstance(exp.model.feature_selector, GaussianFeatureSelector):
+            activated_gates = torch.where(phi < 0.9)[0]
+        elif isinstance(exp.model.feature_selector, ConcreteFeatureSelector):
+            activated_gates = torch.where(phi < exp.model.feature_selector.p_threshold)[0]
+        else:
+            raise ValueError('Unknown feature selector')
+
         n_features = exp.model.feature_selector.in_features
     
         from .utils import plot_band_selection
