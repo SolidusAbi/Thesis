@@ -5,3 +5,5 @@ from .VNIRimagesOp12C1 import VNIRimagesOp12C1
 from .VNIRimagesOp12C2 import VNIRimagesOp12C2
 from .VNIRimagesOp15C1 import VNIRimagesOp15C1
 from .VNIRimagesOp20C1 import VNIRimagesOp20C1
+from .VNIRimagesOpAll_KMeans import VNIRimagesOpAll_KMeans
+from .VNIRimagesOpAll_OCSP import VNIRimagesOpAll_OCSP
