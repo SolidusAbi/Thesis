@@ -17,7 +17,9 @@ def read_laparoscopy_dataset(path:str, selected_wavelength:list = None) -> (pd.D
         X : pd.DataFrame
             Dataframe with the features.
         y : pd.DataFrame
-            Dataframe with the labels.            
+            Dataframe with the labels.
+        wv : list
+            List of wavelengths.       
     '''
     csv_files = ['fat.csv', 'muscle.csv', 'nerve.csv', 'vessels.csv']
     df = list(map(lambda x: pd.read_csv(os.path.join(path, x))[selected_wavelength] if selected_wavelength is not None else pd.read_csv(os.path.join(path, x)), csv_files))
@@ -27,17 +29,21 @@ def read_laparoscopy_dataset(path:str, selected_wavelength:list = None) -> (pd.D
                       pd.Series(2, index=df[2].index, dtype=int),
                       pd.Series(3, index=df[3].index, dtype=int)], axis=0)
 
-    return X_df, y_df
+    wv = X_df.columns
+
+    return X_df, y_df, wv.to_list()
 
 class LaparoscopyDataset(Dataset):
     def __init__(self, root_dir:str, selected_wavelength: list = None, transform: nn.Module = None):
         super(LaparoscopyDataset, self).__init__()
 
-        X_df, y_df = read_laparoscopy_dataset(root_dir, selected_wavelength)
+        X_df, y_df, wv = read_laparoscopy_dataset(root_dir, selected_wavelength)
                         
         self.X = torch.from_numpy(X_df.to_numpy()).float()
         self.y = torch.from_numpy(y_df.to_numpy()).long()
+        self.wv = wv
         self.transform = transform
+        
     def __len__(self):
         return len(self.X)
 

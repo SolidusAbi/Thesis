@@ -1,10 +1,11 @@
 import torch
-
 from torch import nn
-from FeatureSelection.StochasticGate import ConcreteFeatureSelector, GaussianFeatureSelector, FeatureSelectorSG
-
 from collections import deque
 from itertools import islice
+
+from FeatureSelection.StochasticGate import ConcreteFeatureSelector, GaussianFeatureSelector, FeatureSelectorSG
+# from IPDL import MatrixEstimator
+
 
 def sliding_window_iter(iterable, size):
     '''

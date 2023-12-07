@@ -5,6 +5,15 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
+from torch.utils.data import random_split
+from torch.utils.data.dataset import Subset
+
+def split_dataset(dataset, train_size, seed=None, **kwargs) -> (Subset, Subset):
+    generator = torch.Generator().manual_seed(seed)
+
+    train_size = int(train_size * len(dataset))
+    test_size = len(dataset) - train_size
+    return random_split(dataset, [train_size, test_size], generator=generator)
 
 def cosine_scheduler(timesteps, s=8e-3):
     r'''
