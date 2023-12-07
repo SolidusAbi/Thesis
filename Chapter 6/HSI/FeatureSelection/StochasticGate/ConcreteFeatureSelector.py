@@ -11,7 +11,7 @@ class ConcreteFeatureSelector(FeatureSelectorSG):
         self.logit_threshold = np.log(p_threshold) - np.log(1. - p_threshold)
 
         # dropout rate $\phi_i$
-        self.logit_p = Parameter(torch.ones(in_features)*.5)
+        self.logit_p = Parameter(torch.zeros(in_features))
         
         # temperature $\tau$
         self.tau = tau
