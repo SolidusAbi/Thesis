@@ -4,7 +4,7 @@ from collections import deque
 from itertools import islice
 
 from FeatureSelection.StochasticGate import ConcreteFeatureSelector, GaussianFeatureSelector, FeatureSelectorSG
-# from IPDL import MatrixEstimator
+from IPDL import MatrixEstimator
 
 
 def sliding_window_iter(iterable, size):
@@ -39,7 +39,7 @@ class FeatureSelectionMethod:
     Gaussian = 1
 
 class Model(nn.Module):
-    def __init__(self, dims:list, fs_method:FeatureSelectionMethod, fs_threshold=.9, fs_tau=.3, sigma=.5):
+    def __init__(self, dims:list, fs_method:FeatureSelectionMethod, fs_threshold=.9, fs_tau=.3, sigma=.5, ipdl=False):
         ''' 
             DL model used for feature selection.
 
@@ -62,8 +62,9 @@ class Model(nn.Module):
                 Standard deviation for the Gaussian feature selection layer. Only used for Gaussian approach.
         '''
         super(Model, self).__init__()
+        self.entropy_estimator = ipdl
         if fs_method == FeatureSelectionMethod.Concrete:
-            self.feature_selector = ConcreteFeatureSelector(dims[0], p_threshold=fs_threshold, tau=fs_tau)
+            self.feature_selector = ConcreteFeatureSelector(dims[0], p_threshold=fs_threshold, tau=fs_tau, ipdl=ipdl)
         elif fs_method == FeatureSelectionMethod.Gaussian:
             self.feature_selector = GaussianFeatureSelector(dims[0], sigma=sigma)
         else: 
@@ -79,12 +80,12 @@ class Model(nn.Module):
 
     def _hidden_layer(self, in_features, out_features, output=False):
         if output:
-            return nn.Linear(in_features, out_features)
+            return nn.Sequential(nn.Linear(in_features, out_features), MatrixEstimator(.1)) if self.entropy_estimator else nn.Linear(in_features, out_features) 
         else:
             return nn.Sequential(
                 nn.Linear(in_features, out_features),
                 nn.BatchNorm1d(out_features, affine=False),
-                nn.ReLU(inplace=True),
+                *(nn.ReLU(inplace=True),) if not self.entropy_estimator else (nn.ReLU(inplace=True), MatrixEstimator(.1)),
                 nn.Dropout(.5),
             )
 

@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 class GaussianFeatureSelector(FeatureSelectorSG):
-    def __init__(self, in_features: int, sigma:float=.5):
+    def __init__(self, in_features: int, sigma:float=.5, ipdl=False) -> None:
         super(GaussianFeatureSelector, self).__init__(in_features)
         self.sigma = sigma
         self.mu = Parameter(torch.ones(in_features)*.5) 
@@ -16,7 +16,14 @@ class GaussianFeatureSelector(FeatureSelectorSG):
         drop_prob = self.mu + (self.sigma * eps * self.training) 
         z = 1 - drop_prob
         gate = F.hardtanh(z, 0, 1)
-        return gate * x
+        result = gate * x
+
+        if self.entropy_estimator:
+            x_s = result[:, np.argwhere(np.sum(result.detach().cpu().numpy(), axis=0) != 0).flatten()]
+            self.matrix_estimator(x_s)
+            
+        return result
+        
 
     def _guassian_cdf(self, mu:torch.Tensor, sigma:float) -> torch.Tensor:
         r''' 

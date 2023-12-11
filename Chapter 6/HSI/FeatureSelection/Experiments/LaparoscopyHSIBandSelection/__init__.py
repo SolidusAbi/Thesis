@@ -1,3 +1,4 @@
 from .LaparoscopyHSIBandSelectionBase import LaparoscopyHSIBandSelectionBase
 from .LaparoscopyHSIBandSelectionConcrete import LaparoscopyHSIBandSelectionConcrete
+from .LaparoscopyHSIBandSelectiionIP import LaparoscopyHSIBandSelectiionIP
 from . ExperimentFactory import ExperimentFactory, ExperimentType

@@ -3,7 +3,7 @@ from ..Model import FeatureSelectionMethod
 from .LaparoscopyHSIBandSelectionBase import LaparoscopyHSIBandSelectionBase
 
 class LaparoscopyHSIBandSelectionGaussian(LaparoscopyHSIBandSelectionBase):
-    def __init__(self, sigma, reg_factor) -> None:
+    def __init__(self, sigma, reg_factor, **kwargs) -> None:
         '''
             Experiment for the LaparoscopyHSI dataset using the Concrete approach for feature selection.
 
@@ -15,7 +15,7 @@ class LaparoscopyHSIBandSelectionGaussian(LaparoscopyHSIBandSelectionBase):
             fs_tau: float
                 Temperature for the feature selection layer.
         '''
-        super().__init__(FeatureSelectionMethod.Gaussian, reg_factor=reg_factor, sigma=sigma)
+        super().__init__(FeatureSelectionMethod.Gaussian, reg_factor=reg_factor, sigma=sigma, **kwargs)
         self.experiment = 'Gaussian_sg{}_reg{}'.format(sigma, reg_factor)
 
     def config(self) -> dict:

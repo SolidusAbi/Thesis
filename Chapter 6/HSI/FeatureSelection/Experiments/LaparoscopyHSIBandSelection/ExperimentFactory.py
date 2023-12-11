@@ -1,5 +1,6 @@
 from .LaparoscopyHSIBandSelectionConcrete import LaparoscopyHSIBandSelectionConcrete
 from .LaparoscopyHSIBandSelectionGaussian import LaparoscopyHSIBandSelectionGaussian
+from .LaparoscopyHSIBandSelectiionIP import LaparoscopyHSIBandSelectiionIP
 from enum import Enum
 
 class ExperimentType(Enum):
@@ -10,6 +11,7 @@ class ExperimentType(Enum):
     Concrete_2 = 1
     Concrete_3 = 2
     Gaussian_5 = 3
+    Concrete_IP = 4
 
 class ExperimentFactory(object):
     """Factory class for creating experiments."""
@@ -27,6 +29,8 @@ class ExperimentFactory(object):
             return LaparoscopyHSIBandSelectionConcrete(reg_factor=reg_factor, fs_tau=0.3)
         elif experiment == ExperimentType.Gaussian_5:
             return LaparoscopyHSIBandSelectionGaussian(reg_factor=reg_factor, sigma=0.5)
+        elif experiment == ExperimentType.Concrete_IP:
+            return LaparoscopyHSIBandSelectiionIP()
         else:
             raise NotImplementedError(f'Experiment {experiment} not implemented yet.')
         

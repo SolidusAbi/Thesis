@@ -3,7 +3,7 @@ from ..Model import FeatureSelectionMethod
 from .LaparoscopyHSIBandSelectionBase import LaparoscopyHSIBandSelectionBase
 
 class LaparoscopyHSIBandSelectionConcrete(LaparoscopyHSIBandSelectionBase):
-    def __init__(self, fs_tau:float, reg_factor:float) -> None:
+    def __init__(self, fs_tau:float, reg_factor:float, **kwargs) -> None:
         '''
             Experiment for the LaparoscopyHSI dataset using the Concrete approach for feature selection.
 
@@ -15,7 +15,7 @@ class LaparoscopyHSIBandSelectionConcrete(LaparoscopyHSIBandSelectionBase):
             reg_factor: float
                 Regularization factor ($\lambda$) for the feature selection layer.
         '''
-        super().__init__(FeatureSelectionMethod.Concrete, reg_factor=reg_factor, fs_threshold=0.9, fs_tau=fs_tau)
+        super().__init__(FeatureSelectionMethod.Concrete, reg_factor=reg_factor, fs_threshold=0.9, fs_tau=fs_tau, **kwargs)
         self.experiment = 'Concrete_tau{}_reg{}'.format(fs_tau, reg_factor)
 
     def config(self) -> dict:

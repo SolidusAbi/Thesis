@@ -26,6 +26,7 @@ class LaparoscopyHSIBandSelectionBase(ExperimentBase):
                     fs_threshold: for the Concrete approach.
                     fs_tau: for the Concrete approach.
                     sigma: for the Gaussian approach. 
+                    ipdl: whether to estimate the Information Plane.
         '''
         super().__init__()
         self.reg_factor = reg_factor

@@ -5,8 +5,9 @@ import numpy as np
 import torch
 
 class ConcreteFeatureSelector(FeatureSelectorSG):
-    def __init__(self, in_features: int, p_threshold:float = 0.9, tau=.5) -> None:
-        super(ConcreteFeatureSelector, self).__init__(in_features)
+    def __init__(self, in_features: int, p_threshold:float = 0.9, tau=.5, ipdl=False) -> None:
+        super(ConcreteFeatureSelector, self).__init__(in_features, ipdl=ipdl)
+        self.entropy_estimator = ipdl
         self.p_threshold = p_threshold
         self.logit_threshold = np.log(p_threshold) - np.log(1. - p_threshold)
 
@@ -20,8 +21,13 @@ class ConcreteFeatureSelector(FeatureSelectorSG):
         if self.training:
             return self.concrete_bernoulli(x)
 
-        return x * (self.logit_p < self.logit_threshold).float()
-
+        result = x * (self.logit_p < self.logit_threshold).float() 
+        if self.entropy_estimator:
+            x_s = result[:, np.argwhere(np.sum(result.detach().cpu().numpy(), axis=0) != 0).flatten()]
+            self.matrix_estimator(x_s)
+    
+        return result
+    
     def concrete_bernoulli(self, x):
         eps = 1e-8
         unif_noise = torch.cuda.FloatTensor(*x.size()).uniform_() if self.logit_p.is_cuda else torch.FloatTensor(*x.size()).uniform_()

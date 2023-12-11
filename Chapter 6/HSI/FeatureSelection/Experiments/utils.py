@@ -55,9 +55,12 @@ def log(tb_writer, model, loss, reg_factor, epoch):
     for i in range(phi.shape[0]):
         tb_writer.add_scalar(f'Phi/{i}', phi[i], epoch)
 
+from IPDL import ClassificationInformationPlane
+from IPDL.optim import AligmentOptimizer
 
 def train(model, train_dataset, test_dataset, n_epochs=50, lr=1e-3, batch_size=32, weighted_sampler=False,
-           reg_factor=1, tb_writer=None, log_interval=5, seed=42, **kwargs):
+           reg_factor=1, tb_writer=None, log_interval=5, seed=42, ip_estimation=False, ipdl_dataset=None,
+            Ax=None, Ky=None, Ay=None, **kwargs):
     r'''
         Training FS-DL model.
 
@@ -125,6 +128,18 @@ def train(model, train_dataset, test_dataset, n_epochs=50, lr=1e-3, batch_size=3
         )
       
   
+    # IP Estimation
+    if ip_estimation:
+        matrix_optimizer = AligmentOptimizer(model, beta=0.9, n_sigmas=200)
+        ip = ClassificationInformationPlane(model, use_softmax=True)
+        with torch.no_grad():
+            val_inputs, _= ipdl_dataset[:]
+            model.eval()
+            model(val_inputs.to(device))
+            # matrix_optimizer.step(Ky.to(device)) # Commented because it is initialized in the exp.
+            ip.computeMutualInformation(Ax.to(device), Ay.to(device))
+            
+
     reg_factor_sch = cosine_scheduler(n_epochs, 1e-3) * reg_factor
 
     for epoch in epoch_iterator:
@@ -157,8 +172,15 @@ def train(model, train_dataset, test_dataset, n_epochs=50, lr=1e-3, batch_size=3
             if epoch % log_interval == 0 and tb_writer is not None:
                 log(tb_writer, model, test_loss, reg_factor_sch[epoch], epoch) 
 
+        # Information Plane
+        with torch.no_grad():
+            model.eval()
+            model(val_inputs.to(device))
+            matrix_optimizer.step(Ky.to(device))
+            ip.computeMutualInformation(Ax.to(device), Ay.to(device))
+
     # Last epoch results if not logged
     if epoch % log_interval != 0 and tb_writer is not None:
         log(tb_writer, model, test_loss, reg_factor_sch[epoch], epoch) 
 
-    return model.cpu()
+    return model.cpu() if not ip_estimation else (model.cpu(), ip)
