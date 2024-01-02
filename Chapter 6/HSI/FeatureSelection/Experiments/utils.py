@@ -173,11 +173,12 @@ def train(model, train_dataset, test_dataset, n_epochs=50, lr=1e-3, batch_size=3
                 log(tb_writer, model, test_loss, reg_factor_sch[epoch], epoch) 
 
         # Information Plane
-        with torch.no_grad():
-            model.eval()
-            model(val_inputs.to(device))
-            matrix_optimizer.step(Ky.to(device))
-            ip.computeMutualInformation(Ax.to(device), Ay.to(device))
+        if ip_estimation:
+            with torch.no_grad():
+                model.eval()
+                model(val_inputs.to(device))
+                matrix_optimizer.step(Ky.to(device))
+                ip.computeMutualInformation(Ax.to(device), Ay.to(device))
 
     # Last epoch results if not logged
     if epoch % log_interval != 0 and tb_writer is not None:
