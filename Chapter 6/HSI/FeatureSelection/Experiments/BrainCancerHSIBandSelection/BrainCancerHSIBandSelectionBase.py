@@ -24,7 +24,8 @@ class BrainCancerHSIBandSelectionBase(ExperimentBase):
                     sigma: for the Gaussian approach. 
         '''
         super().__init__()
-        self.model = Model([128, 64, 32, 3], fs_method, **kwargs) 
+        # self.model = Model([128, 64, 32, 3], fs_method, **kwargs) 
+        self.model = Model([128, 100, 32, 3], fs_method, **kwargs) 
         self.experiment, self.dataset, self.train_dataset, self.test_dataset = None, None, None, None
 
 
