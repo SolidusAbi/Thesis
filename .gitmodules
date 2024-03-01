@@ -7,3 +7,6 @@
 [submodule "modules/HySpecLab"]
 	path = modules/HySpecLab
 	url = git@github.com:SolidusAbi/HySpecLab.git
+[submodule "Chapter7/CLHU"]
+	path = Chapter7/CLHU
+	url = git@github.com:SolidusAbi/CLHU.git
