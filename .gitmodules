@@ -10,3 +10,6 @@
 [submodule "Chapter7/CLHU"]
 	path = Chapter7/CLHU
 	url = git@github.com:SolidusAbi/CLHU.git
+[submodule "Chapter8/adelen"]
+	path = Chapter8/adelen
+	url = https://github.com/SolidusAbi/ADeLEn.git
